@@ -55,7 +55,7 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
     console.log("Web Hooks Called");
     const webhookSignature = req.get("X-Razorpay-Signature");
     console.log("Web Hook Signature : ", webhookSignature);
-    
+
     const isWebHookValid = validateWebhookSignature(
       JSON.stringify(req.body),
       webhookSignature,
@@ -97,4 +97,22 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
     return res.status(500).json({ msg: error.message });
   }
 });
+
+paymentRouter.get("/premium/verify", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+
+    if (user.isPreminum) {
+      return res.json({ isPreminum: true });
+    }
+
+    return res.json({ isPreminum: false });
+  } catch (error) {
+    console.error("Error verifying premium status:", error);
+    return res
+      .status(500)
+      .json({ error: "Server error while verifying premium status" });
+  }
+});
+
 module.exports = paymentRouter;
