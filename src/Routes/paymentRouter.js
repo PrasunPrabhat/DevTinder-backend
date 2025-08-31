@@ -52,8 +52,10 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 
 paymentRouter.post("/payment/webhook", async (req, res) => {
   try {
-    console.log("Web Hooks Called")
+    console.log("Web Hooks Called");
     const webhookSignature = req.get("X-Razorpay-Signature");
+    console.log("Web Hook Signature : ", webhookSignature);
+
     const isWebHookValid = validateWebhookSignature(
       JSON.stringify(req.body),
       webhookSignature,
@@ -72,15 +74,15 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
     });
     payment.status = paymentDetails.status;
     await payment.save();
-    console.log("payment saved")
+    console.log("payment saved");
 
     // Update the User as Preminum
     const user = await UserModel.findOne({ _id: payment.userId });
     user.isPreminum = true;
     user.membershipType = payment.notes.membershipType;
+    console.log("User Saved");
 
     await user.save();
-    console.log("User Saved")
 
     // payment.captured
     // if (req.body.event == "payment.captured") {
