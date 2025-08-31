@@ -1,0 +1,6 @@
+node_modules
+
+# Ignore constants link file
+/src/Constants
+
+.env
