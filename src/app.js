@@ -10,7 +10,7 @@ app.use(
   CORS({
     origin: [
       "http://localhost:5173", // Local frontend
-      "https://dev-tider-frontend.vercel.app/", // Deployed frontend
+      "https://dev-tider-frontend.vercel.app", // Deployed frontend
     ],
     credentials: true,
   })
