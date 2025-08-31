@@ -55,9 +55,9 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
     console.log("Web Hooks Called");
     const webhookSignature = req.get("X-Razorpay-Signature");
     console.log("Web Hook Signature : ", webhookSignature);
-
+    
     const isWebHookValid = validateWebhookSignature(
-      req.body.toString(),
+      JSON.stringify(req.body),
       webhookSignature,
       process.env.RAZORPAY_WEBHOOK_SECRET
     );
@@ -67,32 +67,33 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
     }
 
     // Update the Payment Status in DB
-    const paymentDetails = JSON.parse(req.body).payload.payment.entity;
+    const paymentDetails = req.body.payload.payment.entity;
 
     const payment = await PaymentModel.findOne({
       orderId: paymentDetails.order_id,
     });
-    if (!payment) {
-      return res.status(404).json({ msg: "Payment not found" });
-    }
-
     payment.status = paymentDetails.status;
     await payment.save();
-    console.log("Payment saved");
+    console.log("payment saved");
 
     // Update the User as Preminum
-    const user = await UserModel.findById(payment.userId);
-    if (user) {
-      user.isPreminum = true;
-      user.membershipType = payment.notes.membershipType;
-      await user.save();
-      console.log("User updated");
-    }
+    const user = await UserModel.findOne({ _id: payment.userId });
+    user.isPreminum = true;
+    user.membershipType = payment.notes.membershipType;
+
+    await user.save();
+    console.log("User Saved");
+
+    // payment.captured
+    // if (req.body.event == "payment.captured") {
+    // }
+    // // payment.failed
+    // if (req.body.event == "payment.failed") {
+    // }
 
     // Return success response to razorpay
-    return res.status(200).json({ msg: "Webhook processed successfully" });
+    return res.status(200).json({ msg: "WebHook received successfully" });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ msg: error.message });
   }
 });

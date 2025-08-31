@@ -29,7 +29,6 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
-app.use("/payment/webhook", express.raw({ type: "application/json" }));
 app.use("/", paymentRouter);
 
 const PORT = 3000;
