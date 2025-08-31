@@ -9,8 +9,8 @@ const CORS = require("cors");
 app.use(
   CORS({
     origin: [
-      "http://localhost:5173", // Local frontend
       "https://dev-tider-frontend.vercel.app", // Deployed frontend
+      "http://localhost:5173", // Local frontend
     ],
     credentials: true,
   })
