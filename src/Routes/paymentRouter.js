@@ -103,7 +103,10 @@ paymentRouter.get("/premium/verify", userAuth, async (req, res) => {
     const user = req.user;
 
     if (user.isPreminum) {
-      return res.json({ isPreminum: true });
+      return res.json({
+        isPreminum: true,
+        membershipType: user.membershipType,
+      });
     }
 
     return res.json({ isPreminum: false });
