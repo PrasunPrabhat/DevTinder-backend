@@ -5,6 +5,7 @@ const connectDB = require("./Config/database");
 const app = express(); // Instance of the ExpressJS Application
 const cookieParser = require("cookie-parser");
 const CORS = require("cors");
+const http = require("http");
 
 app.use(
   CORS({
@@ -24,18 +25,25 @@ const profileRouter = require("./Routes/profileRouter");
 const requestRouter = require("./Routes/requestRouter");
 const userRouter = require("./Routes/userRouter");
 const paymentRouter = require("./Routes/paymentRouter");
+const initializeSocket = require("./Websocket/Socket");
+const chatRouter = require("./Routes/chatRouter");
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
 app.use("/", paymentRouter);
+app.use("/", chatRouter);
+
+// Config For the Websockets using the socket.io
+const httpServer = http.createServer(app);
+initializeSocket(httpServer);
 
 const PORT = 3000;
 connectDB()
   .then(() => {
     console.log("Database connection established...");
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
       console.log("Server is Running On to the Port ", PORT, ".....");
     });
   })

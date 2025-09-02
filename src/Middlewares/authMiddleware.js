@@ -7,11 +7,11 @@ const userAuth = async (req, res, next) => {
     // ! Read the Token from the Req Cookies
     const { token } = req.cookies;
     if (!token) {
-      return res.status(401).send("Please Login!")
+      return res.status(401).send("Please Login!");
     }
 
     // ! Validate the Token
-    const decodedMessage = await JWT.verify(token, "Prasunkir@21");
+    const decodedMessage = await JWT.verify(token, process.env.JWT_SECRET);
     const { _id } = decodedMessage;
 
     // ! Find the user is the suer Exists or not
